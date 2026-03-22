@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The One Ring — Cards of Middle-earth</title>
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #f0d080;
+    --gold-dark: #8a6a1a;
+    --crimson: #8b1a1a;
+    --shadow: #1a0a00;
+    --parchment: #f5e8c0;
+    --parchment-dark: #d4b896;
+    --ink: #2a1a08;
+    --mordor: #3a1a00;
+    --shire: #2d4a1e;
+    --elven: #1a2a3a;
+    --hp-green: #2d6a2d;
+    --hp-red: #8b1a1a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0500;
+    font-family: 'Cinzel', serif;
+    color: var(--parchment);
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(ellipse at 20% 50%, rgba(139,26,26,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(201,168,76,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 100%, rgba(58,26,0,0.4) 0%, transparent 60%);
+  }
+
+  /* ── RUNE SHIMMER ── */
+  @keyframes runeGlow {
+    0%,100% { opacity: 0.12; }
+    50% { opacity: 0.3; }
+  }
+  .rune-bg {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Ctext x='10' y='50' font-size='28' fill='%23c9a84c' opacity='0.06' font-family='serif'%3Eᚠᚢᚦᚨ%3C/text%3E%3Ctext x='10' y='90' font-size='24' fill='%23c9a84c' opacity='0.06' font-family='serif'%3Eᚱᚲᚷᚹ%3C/text%3E%3C/svg%3E");
+    animation: runeGlow 4s ease-in-out infinite;
+  }
+
+  /* ── SCREENS ── */
+  .screen { position: relative; z-index: 1; display: none; }
+  .screen.active { display: block; }
+
+  /* ── TITLE SCREEN ── */
+  #title-screen {
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 40px 20px;
+  }
+  #title-screen.active { display: flex; }
+
+  .eye-of-sauron {
+    width: 120px; height: 80px; margin: 0 auto 30px;
+    position: relative;
+  }
+  .eye-of-sauron::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse, #ff6600 0%, #cc2200 40%, transparent 70%);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    box-shadow: 0 0 40px #ff4400, 0 0 80px #cc220066;
+    animation: eyePulse 2s ease-in-out infinite;
+  }
+  .eye-of-sauron::after {
+    content: '';
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    width: 30px; height: 50px;
+    background: #000;
+    border-radius: 50%;
+    box-shadow: 0 0 20px #ff6600;
+  }
+  @keyframes eyePulse {
+    0%,100% { box-shadow: 0 0 40px #ff4400, 0 0 80px #cc220066; }
+    50% { box-shadow: 0 0 60px #ff6600, 0 0 120px #cc2200aa; }
+  }
+
+  .game-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(1.6rem, 5vw, 3.2rem);
+    font-weight: 900;
+    color: var(--gold);
+    text-shadow: 0 0 30px var(--gold-dark), 0 2px 4px #000;
+    letter-spacing: 0.05em;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .game-subtitle {
+    font-family: 'IM Fell English', serif;
+    font-size: clamp(0.9rem, 2vw, 1.2rem);
+    color: var(--parchment-dark);
+    font-style: italic;
+    margin-bottom: 40px;
+    opacity: 0.8;
+  }
+
+  .ring-inscription {
+    font-family: 'IM Fell English', serif;
+    font-size: 0.75rem;
+    color: #ff6600;
+    opacity: 0.7;
+    letter-spacing: 0.15em;
+    margin-bottom: 50px;
+  }
+
+  .btn {
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    padding: 14px 40px;
+    border: 2px solid var(--gold);
+    background: linear-gradient(135deg, rgba(201,168,76,0.15), rgba(201,168,76,0.05));
+    color: var(--gold);
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .btn:hover::before { opacity: 1; }
+  .btn:hover { color: var(--shadow); border-color: var(--gold-light); }
+  .btn span { position: relative; z-index: 1; }
+
+  .btn-danger { border-color: var(--crimson); color: #ff6666; }
+  .btn-danger::before { background: linear-gradient(135deg, var(--crimson), #5a0a0a); }
+  .btn-danger:hover { color: var(--parchment); }
+
+  /* ── CHOOSE FACTION ── */
+  .faction-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .faction-card {
+    border: 2px solid transparent;
+    padding: 24px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .faction-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    opacity: 0.1;
+    transition: opacity 0.3s;
+  }
+  .faction-card:hover::before, .faction-card.selected::before { opacity: 0.2; }
+  .faction-card:hover, .faction-card.selected { transform: translateY(-4px); }
+
+  .faction-fellowship { border-color: #4a9a4a; }
+  .faction-fellowship::before { background: var(--shire); }
+  .faction-fellowship:hover, .faction-fellowship.selected { border-color: #6abf6a; box-shadow: 0 0 20px rgba(74,154,74,0.4); }
+
+  .faction-shadow { border-color: #8b1a1a; }
+  .faction-shadow::before { background: var(--mordor); }
+  .faction-shadow:hover, .faction-shadow.selected { border-color: #cc3333; box-shadow: 0 0 20px rgba(139,26,26,0.5); }
+
+  .faction-elven { border-color: #4a7abf; }
+  .faction-elven::before { background: var(--elven); }
+  .faction-elven:hover, .faction-elven.selected { border-color: #7ab0ff; box-shadow: 0 0 20px rgba(74,122,191,0.4); }
+
+  .faction-rohan { border-color: #bf9a4a; }
+  .faction-rohan::before { background: #3a2a00; }
+  .faction-rohan:hover, .faction-rohan.selected { border-color: var(--gold); box-shadow: 0 0 20px rgba(191,154,74,0.4); }
+
+  .faction-icon { font-size: 3rem; margin-bottom: 12px; }
+  .faction-name { font-family: 'Cinzel Decorative', serif; font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+  .faction-desc { font-family: 'IM Fell English', serif; font-size: 0.8rem; font-style: italic; opacity: 0.7; }
+
+  /* ── GAME BOARD ── */
+  #game-screen { min-height: 100vh; padding: 0; }
+  #game-screen.active { display: flex; flex-direction: column; }
+
+  .game-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 20px;
+    background: linear-gradient(180deg, rgba(10,5,0,0.95) 0%, rgba(20,10,0,0.8) 100%);
+    border-bottom: 1px solid rgba(201,168,76,0.3);
+    position: sticky; top: 0; z-index: 100;
+    flex-wrap: wrap; gap: 10px;
+  }
+
+  .player-hud {
+    display: flex; align-items: center; gap: 12px;
+    flex-wrap: wrap;
+  }
+  .hud-name {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 0.9rem;
+    color: var(--gold);
+  }
+  .hp-bar-wrap { display: flex; align-items: center; gap: 8px; }
+  .hp-label { font-size: 0.75rem; color: var(--parchment-dark); }
+  .hp-bar {
+    width: 120px; height: 10px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(201,168,76,0.3);
+    position: relative; overflow: hidden;
+  }
+  .hp-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--hp-red), #cc4444);
+    transition: width 0.5s ease;
+  }
+  .hp-fill.high { background: linear-gradient(90deg, var(--hp-green), #55aa55); }
+  .hp-fill.mid { background: linear-gradient(90deg, #8a6a00, #ccaa00); }
+  .hp-num { font-size: 0.8rem; color: var(--parchment); min-width: 40px; }
+
+  .mana-dots { display: flex; gap: 4px; }
+  .mana-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    border: 1px solid #4a7abf;
+    background: transparent;
+    transition: background 0.3s;
+  }
+  .mana-dot.filled { background: #4a7abf; box-shadow: 0 0 6px #4a7abf; }
+
+  .turn-info {
+    text-align: center;
+  }
+  .turn-label { font-size: 0.7rem; color: var(--parchment-dark); letter-spacing: 0.1em; }
+  .turn-num { font-family: 'Cinzel Decorative', serif; font-size: 1.2rem; color: var(--gold); }
+  .phase-label { font-size: 0.7rem; color: #aaa; }
+
+  /* ── BATTLEFIELD ── */
+  .battlefield {
+    flex: 1;
+    display: grid;
+    grid-template-rows: 1fr auto 1fr;
+    gap: 0;
+    padding: 0;
+    min-height: 0;
+    background:
+      radial-gradient(ellipse at 50% 50%, rgba(30,15,0,0.6) 0%, transparent 80%),
+      linear-gradient(180deg, #0d0600 0%, #120800 50%, #0d0600 100%);
+    position: relative;
+  }
+
+  .battlefield::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 10%; right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201,168,76,0.4), transparent);
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  .field-zone {
+    padding: 12px 16px;
+    min-height: 130px;
+    display: flex;
+    flex-direction: column;
+  }
+  .field-zone-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: rgba(201,168,76,0.5);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .field-zone-label.enemy { color: rgba(255,102,0,0.5); }
+
+  .field-cards {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  /* ── LOG / CENTER ── */
+  .battle-log-area {
+    padding: 8px 16px;
+    border-top: 1px solid rgba(201,168,76,0.15);
+    border-bottom: 1px solid rgba(201,168,76,0.15);
+    background: rgba(0,0,0,0.4);
+    display: flex; align-items: center; justify-content: center;
+    min-height: 50px;
+    text-align: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .log-text {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--parchment-dark);
+    max-width: 500px;
+    line-height: 1.4;
+  }
+  .log-text.damage { color: #ff6666; }
+  .log-text.heal { color: #66ff66; }
+  .log-text.special { color: var(--gold-light); }
+
+  /* ── HAND ── */
+  .hand-area {
+    background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, transparent 100%);
+    padding: 12px 16px 16px;
+  }
+  .hand-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: rgba(201,168,76,0.5);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .hand-cards {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  /* ── CARD ── */
+  .card {
+    width: 90px;
+    height: 130px;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    flex-shrink: 0;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .card:hover { transform: translateY(-8px) scale(1.05); }
+  .card.selected { transform: translateY(-12px) scale(1.08); box-shadow: 0 0 20px var(--gold); }
+  .card.exhausted { opacity: 0.5; filter: grayscale(0.6); }
+  .card.attackable { animation: attackableGlow 1s ease-in-out infinite; cursor: crosshair; }
+  @keyframes attackableGlow {
+    0%,100% { box-shadow: 0 0 10px rgba(255,80,80,0.5); }
+    50% { box-shadow: 0 0 25px rgba(255,80,80,0.9), 0 0 40px rgba(255,0,0,0.4); }
+  }
+
+  .card-inner {
+    width: 100%; height: 100%;
+    display: flex; flex-direction: column;
+    border: 1.5px solid;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Faction color borders */
+  .card-fellowship .card-inner { border-color: #4a9a4a; background: linear-gradient(180deg, #0a1f0a, #0d2a0d); }
+  .card-shadow .card-inner { border-color: #8b1a1a; background: linear-gradient(180deg, #1a0505, #250808); }
+  .card-elven .card-inner { border-color: #4a7abf; background: linear-gradient(180deg, #050d1a, #08122a); }
+  .card-rohan .card-inner { border-color: #bf9a4a; background: linear-gradient(180deg, #1a1005, #251808); }
+  .card-neutral .card-inner { border-color: var(--gold-dark); background: linear-gradient(180deg, #1a1008, #251808); }
+
+  .card-top {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 3px 5px;
+    font-size: 0.6rem;
+  }
+  .card-cost {
+    width: 18px; height: 18px;
+    background: #4a7abf;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.7rem; color: white;
+    box-shadow: 0 0 6px #4a7abf;
+  }
+  .card-type-tag { font-size: 0.55rem; color: rgba(201,168,76,0.7); letter-spacing: 0.05em; }
+
+  .card-art {
+    flex: 1;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    overflow: hidden;
+    font-size: 2rem;
+    background: rgba(0,0,0,0.2);
+  }
+  .card-art-symbol {
+    font-size: 2.2rem;
+    filter: drop-shadow(0 0 8px currentColor);
+    z-index: 1;
+  }
+  .card-art-bg {
+    position: absolute; inset: 0;
+    opacity: 0.08;
+    font-size: 4rem;
+    display: flex; align-items: center; justify-content: center;
+    filter: blur(2px);
+  }
+
+  /* Tarot-style ornament */
+  .card-ornament {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    opacity: 0.6;
+  }
+  .card-fellowship .card-ornament { background: linear-gradient(90deg, transparent, #4a9a4a, transparent); }
+  .card-shadow .card-ornament { background: linear-gradient(90deg, transparent, #8b1a1a, transparent); }
+  .card-elven .card-ornament { background: linear-gradient(90deg, transparent, #4a7abf, transparent); }
+  .card-rohan .card-ornament { background: linear-gradient(90deg, transparent, #bf9a4a, transparent); }
+  .card-neutral .card-ornament { background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+
+  .card-name {
+    font-family: 'Cinzel', serif;
+    font-size: 0.55rem;
+    font-weight: 600;
+    text-align: center;
+    padding: 3px 4px 1px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--parchment);
+  }
+
+  .card-stats {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 2px 5px 4px;
+    font-size: 0.65rem;
+    font-weight: 700;
+  }
+  .stat-atk { color: #ff7777; }
+  .stat-def { color: #7777ff; }
+  .stat-hp { color: #77ff77; font-size: 0.6rem; }
+
+  .card-effect-text {
+    font-family: 'IM Fell English', serif;
+    font-size: 0.5rem;
+    font-style: italic;
+    text-align: center;
+    padding: 0 4px 3px;
+    color: rgba(201,168,76,0.8);
+    line-height: 1.3;
+    border-top: 1px solid rgba(201,168,76,0.2);
+    min-height: 22px;
+    overflow: hidden;
+  }
+
+  /* HP overlay on field cards */
+  .card-hp-bar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: rgba(0,0,0,0.5);
+  }
+  .card-hp-fill {
+    height: 100%;
+    background: #55aa55;
+    transition: width 0.4s;
+  }
+
+  /* ── ACTIONS ── */
+  .action-bar {
+    display: flex; gap: 10px; align-items: center; justify-content: center;
+    padding: 10px 16px;
+    background: rgba(0,0,0,0.6);
+    border-top: 1px solid rgba(201,168,76,0.2);
+    flex-wrap: wrap;
+  }
+  .action-bar .btn { padding: 10px 24px; font-size: 0.85rem; }
+
+  /* ── OVERLAYS ── */
+  .overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.85);
+    display: flex; align-items: center; justify-content: center;
+    display: none;
+  }
+  .overlay.show { display: flex; }
+  .overlay-box {
+    background: linear-gradient(135deg, #1a0d00, #0a0500);
+    border: 2px solid var(--gold);
+    padding: 40px;
+    max-width: 500px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 0 60px rgba(201,168,76,0.3);
+  }
+  .overlay-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 2rem;
+    color: var(--gold);
+    margin-bottom: 16px;
+    text-shadow: 0 0 20px var(--gold-dark);
+  }
+  .overlay-text {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--parchment-dark);
+    line-height: 1.6;
+    margin-bottom: 30px;
+  }
+
+  /* ── TOOLTIP ── */
+  .tooltip {
+    position: fixed;
+    z-index: 300;
+    pointer-events: none;
+    display: none;
+    background: linear-gradient(135deg, #1a0d00ee, #0a0500ee);
+    border: 1px solid var(--gold);
+    padding: 12px;
+    max-width: 200px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+  }
+  .tooltip.show { display: block; }
+  .tooltip-name { font-size: 0.9rem; font-weight: 700; color: var(--gold); margin-bottom: 4px; }
+  .tooltip-effect { font-family: 'IM Fell English', serif; font-style: italic; font-size: 0.8rem; color: var(--parchment-dark); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes cardDeal {
+    from { transform: translateY(60px) rotate(-5deg); opacity: 0; }
+    to { transform: translateY(0) rotate(0); opacity: 1; }
+  }
+  .card-deal { animation: cardDeal 0.4s ease forwards; }
+
+  @keyframes damageFloat {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-50px); opacity: 0; }
+  }
+  .damage-float {
+    position: fixed; pointer-events: none; z-index: 400;
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1.5rem; font-weight: 900;
+    text-shadow: 0 0 10px currentColor;
+    animation: damageFloat 1.2s ease forwards;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .fade-in { animation: fadeIn 0.5s ease; }
+
+  /* ── DECK COUNTER ── */
+  .deck-info {
+    display: flex; gap: 16px; align-items: center;
+    font-size: 0.75rem;
+    color: var(--parchment-dark);
+  }
+  .deck-count { color: var(--gold); font-weight: 700; }
+
+  /* ── SCREEN HEADERS ── */
+  .screen-content {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+  }
+  .screen-content.active { display: flex; }
+
+  h2 {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(1.4rem, 4vw, 2.2rem);
+    color: var(--gold);
+    margin-bottom: 10px;
+    text-shadow: 0 0 20px rgba(201,168,76,0.5);
+  }
+  .sub-text {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    color: var(--parchment-dark);
+    margin-bottom: 30px;
+    font-size: 1rem;
+  }
+  .divider {
+    width: 200px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 20px auto;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .card { width: 72px; height: 104px; }
+    .card-art-symbol { font-size: 1.6rem; }
+    .card-name { font-size: 0.45rem; }
+    .hp-bar { width: 80px; }
+    .game-header { padding: 8px 12px; }
+  }
+
+  /* ── CARD BACK ── */
+  .card-back .card-inner {
+    border-color: var(--gold-dark);
+    background: linear-gradient(135deg, #1a0d00, #0d0600);
+    align-items: center; justify-content: center;
+    font-size: 2rem;
+  }
+</style>
+</head>
+<body>
+<div class="rune-bg"></div>
+
+<!-- TITLE SCREEN -->
+<div id="title-screen" class="screen active">
+  <div class="eye-of-sauron"></div>
+  <div class="game-title">Cards of Middle-earth</div>
+  <div class="game-subtitle">A Turn-Based Tarot Card Duel</div>
+  <div class="divider"></div>
+  <div class="ring-inscription">One Ring to rule them all, One Ring to find them...</div>
+  <button class="btn" onclick="showFactionSelect()"><span>Begin Your Quest</span></button>
+  <div style="margin-top:16px">
+    <button class="btn" style="font-size:0.75rem;padding:8px 20px" onclick="showRules()"><span>Rules of Play</span></button>
+  </div>
+</div>
+
+<!-- FACTION SELECT -->
+<div id="faction-screen" class="screen">
+  <div class="screen-content">
+    <h2>Choose Your Allegiance</h2>
+    <div class="sub-text">Each faction commands a unique deck of 13 cards</div>
+    <div class="faction-grid">
+      <div class="faction-card faction-fellowship" onclick="selectFaction('fellowship')" id="f-fellowship">
+        <div class="faction-icon">🧙</div>
+        <div class="faction-name" style="color:#6abf6a">The Fellowship</div>
+        <div class="faction-desc">Courage and friendship. Balanced stats with healing abilities.</div>
+      </div>
+      <div class="faction-card faction-elven" onclick="selectFaction('elven')" id="f-elven">
+        <div class="faction-icon">🏹</div>
+        <div class="faction-name" style="color:#7ab0ff">The Elves</div>
+        <div class="faction-desc">Ancient magic and swift arrows. High attack, lower defense.</div>
+      </div>
+      <div class="faction-card faction-rohan" onclick="selectFaction('rohan')" id="f-rohan">
+        <div class="faction-icon">⚔️</div>
+        <div class="faction-name" style="color:#d4aa55">Rohan</div>
+        <div class="faction-desc">Warriors of horse and spear. High defense, cavalry charges.</div>
+      </div>
+      <div class="faction-card faction-shadow" onclick="selectFaction('shadow')" id="f-shadow">
+        <div class="faction-icon">👁️</div>
+        <div class="faction-name" style="color:#cc4444">Shadow of Mordor</div>
+        <div class="faction-desc">Dark power and corruption. Devastating attacks, cursed effects.</div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div id="faction-confirm" style="display:none;margin-top:10px">
+      <button class="btn" onclick="startGame()"><span>March to Battle</span></button>
+    </div>
+    <div style="margin-top:16px">
+      <button class="btn btn-danger" style="font-size:0.75rem;padding:8px 20px" onclick="showScreen('title-screen')"><span>Return</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- GAME SCREEN -->
+<div id="game-screen" class="screen">
+  <div class="game-header">
+    <div class="player-hud" id="enemy-hud">
+      <div class="hud-name" id="enemy-faction-name">Enemy</div>
+      <div class="hp-bar-wrap">
+        <span class="hp-label">HP</span>
+        <div class="hp-bar"><div class="hp-fill high" id="enemy-hp-bar" style="width:100%"></div></div>
+        <span class="hp-num" id="enemy-hp-num">30/30</span>
+      </div>
+      <div>
+        <div class="hp-label" style="font-size:0.65rem">HAND</div>
+        <span id="enemy-hand-count" style="color:var(--gold);font-size:0.8rem">5</span>
+      </div>
+      <div class="deck-info">
+        <span>Deck: <span class="deck-count" id="enemy-deck-count">39</span></span>
+      </div>
+    </div>
+
+    <div class="turn-info">
+      <div class="turn-label">TURN</div>
+      <div class="turn-num" id="turn-num">1</div>
+      <div class="phase-label" id="phase-label">Your Turn</div>
+    </div>
+
+    <div class="player-hud" style="flex-direction:column;align-items:flex-end;gap:6px" id="player-hud">
+      <div class="hud-name" id="player-faction-name">Player</div>
+      <div class="hp-bar-wrap">
+        <span class="hp-label">HP</span>
+        <div class="hp-bar"><div class="hp-fill high" id="player-hp-bar" style="width:100%"></div></div>
+        <span class="hp-num" id="player-hp-num">30/30</span>
+      </div>
+      <div class="hp-bar-wrap">
+        <span class="hp-label" style="color:#4a7abf">MANA</span>
+        <div class="mana-dots" id="mana-dots"></div>
+        <span class="hp-num" id="mana-num">3/3</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="battlefield">
+    <!-- Enemy field -->
+    <div class="field-zone">
+      <div class="field-zone-label enemy">⚔ Enemy's Battlefield ⚔</div>
+      <div class="field-cards" id="enemy-field"></div>
+    </div>
+
+    <!-- Battle log -->
+    <div class="battle-log-area">
+      <div class="log-text" id="battle-log">The fate of Middle-earth hangs in the balance...</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center" id="action-buttons">
+        <button class="btn" onclick="endTurn()" id="end-turn-btn" style="padding:8px 20px;font-size:0.8rem"><span>End Turn</span></button>
+        <button class="btn btn-danger" onclick="confirmForfeit()" style="padding:8px 20px;font-size:0.8rem"><span>Forfeit</span></button>
+      </div>
+    </div>
+
+    <!-- Player field -->
+    <div class="field-zone">
+      <div class="field-zone-label">✦ Your Battlefield ✦</div>
+      <div class="field-cards" id="player-field"></div>
+    </div>
+  </div>
+
+  <!-- Hand -->
+  <div class="hand-area">
+    <div class="hand-label">✦ Your Hand — Click a card to select, then play or attack ✦</div>
+    <div class="hand-cards" id="player-hand"></div>
+  </div>
+</div>
+
+<!-- RULES SCREEN -->
+<div id="rules-screen" class="screen">
+  <div class="screen-content" style="max-width:700px;margin:0 auto">
+    <h2>Rules of the One Ring</h2>
+    <div class="divider"></div>
+    <div style="text-align:left;font-family:'IM Fell English',serif;font-style:italic;line-height:1.9;color:var(--parchment-dark);font-size:0.95rem">
+      <p>🎴 <strong style="color:var(--gold);font-style:normal">The Deck:</strong> Each faction commands 13 unique tarot-inspired cards. Draw 5 at start; draw 1 each turn.</p>
+      <br>
+      <p>💎 <strong style="color:var(--gold);font-style:normal">Mana:</strong> You gain +1 Mana each turn (max 10). Cards cost mana equal to their blue circle number.</p>
+      <br>
+      <p>⚔️ <strong style="color:var(--gold);font-style:normal">Playing Cards:</strong> Select a card from your hand and click "Play Card" to summon it to your battlefield.</p>
+      <br>
+      <p>🗡️ <strong style="color:var(--gold);font-style:normal">Attacking:</strong> Select your field card, then click an enemy card (or the enemy hero directly) to attack.</p>
+      <br>
+      <p>🛡️ <strong style="color:var(--gold);font-style:normal">Combat:</strong> Attacker's ATK vs Defender's DEF. Excess damage hits HP. When a card's HP reaches 0, it's destroyed.</p>
+      <br>
+      <p>🌟 <strong style="color:var(--gold);font-style:normal">Special Abilities:</strong> Each card has a unique ability shown in gold text. Effects trigger on play or attack.</p>
+      <br>
+      <p>💀 <strong style="color:var(--gold);font-style:normal">Victory:</strong> Reduce the enemy Hero HP to 0, or force them to draw with no cards remaining.</p>
+      <br>
+      <p>🤖 <strong style="color:var(--gold);font-style:normal">The Enemy:</strong> An AI opponent will play their cards strategically. Watch for their patterns!</p>
+    </div>
+    <div class="divider"></div>
+    <button class="btn" onclick="showScreen('title-screen')"><span>Return</span></button>
+  </div>
+</div>
+
+<!-- WIN/LOSE OVERLAY -->
+<div class="overlay" id="result-overlay">
+  <div class="overlay-box">
+    <div class="overlay-title" id="result-title">Victory!</div>
+    <div class="overlay-text" id="result-text"></div>
+    <button class="btn" onclick="restartGame()"><span>Play Again</span></button>
+  </div>
+</div>
+
+<!-- TOOLTIP -->
+<div class="tooltip" id="tooltip">
+  <div class="tooltip-name" id="tt-name"></div>
+  <div class="tooltip-effect" id="tt-effect"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  CARD DATABASE — 52 Cards (13 per faction)
+// ═══════════════════════════════════════════════════════════════
+const CARD_DB = {
+  fellowship: [
+    { id:'f1', name:'Gandalf the White', cost:5, atk:8, def:5, hp:12, icon:'🧙', type:'Wizard', effect:'Heals your hero for 4 when played', faction:'fellowship',
+      onPlay: (gs)=>{ gs.playerHP = Math.min(30, gs.playerHP+4); return 'Gandalf heals you for 4!'; }},
+    { id:'f2', name:'Frodo Baggins', cost:2, atk:2, def:3, hp:8, icon:'💍', type:'Hobbit', effect:'Reduces next enemy card cost by 2', faction:'fellowship',
+      onPlay: (gs)=>{ gs.enemyMana = Math.max(0, gs.enemyMana-2); return 'Frodo confuses the enemy!'; }},
+    { id:'f3', name:'Samwise Gamgee', cost:2, atk:3, def:4, hp:10, icon:'🌿', type:'Hobbit', effect:'Heals adjacent ally for 2 each turn', faction:'fellowship',
+      onPlay: (gs)=>{ return 'Sam stands firm by your side!'; }},
+    { id:'f4', name:'Aragorn', cost:4, atk:7, def:4, hp:11, icon:'👑', type:'Ranger', effect:'Deals +3 damage to Shadow creatures', faction:'fellowship',
+      onPlay: (gs)=>{ return 'The king returns!'; }},
+    { id:'f5', name:'Legolas', cost:3, atk:6, def:2, hp:8, icon:'🏹', type:'Elf', effect:'Attacks twice each turn', faction:'fellowship',
+      onPlay: (gs)=>{ return 'Legolas nocks two arrows!'; }},
+    { id:'f6', name:'Gimli', cost:3, atk:5, def:5, hp:12, icon:'🪓', type:'Dwarf', effect:'Gains +2 ATK when below half HP', faction:'fellowship',
+      onPlay: (gs)=>{ return 'Gimli charges into battle!'; }},
+    { id:'f7', name:'Boromir', cost:3, atk:5, def:6, hp:10, icon:'🛡️', type:'Warrior', effect:'Absorbs first lethal hit once', faction:'fellowship',
+      onPlay: (gs)=>{ return 'Boromir raises his shield!'; }},
+    { id:'f8', name:'Merry & Pippin', cost:2, atk:2, def:2, hp:7, icon:'🍺', type:'Hobbits', effect:'Draws 2 cards when played', faction:'fellowship',
+      onPlay: (gs)=>{ gs.playerDraw += 2; return 'Merry and Pippin cause mischief — draw 2!'; }},
+    { id:'f9', name:'Ents of Fangorn', cost:4, atk:6, def:7, hp:14, icon:'🌳', type:'Ancient', effect:'Destroys an enemy structure on entry', faction:'fellowship',
+      onPlay: (gs)=>{ return 'Treebeard marches to war!'; }},
+    { id:'f10', name:'Elrond', cost:4, atk:4, def:5, hp:10, icon:'⭐', type:'Elf-lord', effect:'Halves next enemy spell damage', faction:'fellowship',
+      onPlay: (gs)=>{ return 'Elrond raises an elven ward!'; }},
+    { id:'f11', name:'The One Ring', cost:0, atk:0, def:0, hp:1, icon:'💍', type:'Artifact', effect:'Skips enemy turn once when played', faction:'fellowship',
+      onPlay: (gs)=>{ gs.skipEnemyTurn = true; return 'You slip on the Ring — the enemy is frozen!'; }},
+    { id:'f12', name:'Eagle of Manwë', cost:3, atk:5, def:3, hp:9, icon:'🦅', type:'Beast', effect:'Rescues any ally from death once', faction:'fellowship',
+      onPlay: (gs)=>{ return 'Great Eagles answer the call!'; }},
+    { id:'f13', name:'Phial of Galadriel', cost:2, atk:0, def:0, hp:1, icon:'🌟', type:'Artifact', effect:'Banishes one Shadow card from play', faction:'fellowship',
+      onPlay: (gs)=>{ 
+        const idx = gs.enemyField.findIndex(c=>c.faction==='shadow');
+        if(idx>=0){ gs.enemyField.splice(idx,1); return 'The Phial drives away shadow!'; }
+        return 'The Phial glows, but no shadow is present.';
+      }},
+  ],
+  shadow: [
+    { id:'s1', name:'Sauron the Dark Lord', cost:6, atk:10, def:7, hp:15, icon:'👁️', type:'Dark Lord', effect:'Steals 3 HP from enemy hero when attacking', faction:'shadow',
+      onAttack: (gs, dmg)=>{ gs.enemyHP = Math.min(30, gs.enemyHP+3); return 'Sauron drains your life force!'; }},
+    { id:'s2', name:'The Witch-king', cost:5, atk:9, def:6, hp:12, icon:'👻', type:'Nazgûl', effect:'Ignores enemy defense on first attack', faction:'shadow',
+      onPlay: (gs)=>{ return 'The Witch-king rides to destroy!'; }},
+    { id:'s3', name:'Shelob', cost:4, atk:7, def:4, hp:11, icon:'🕷️', type:'Beast', effect:'Poisons struck enemy (−2 HP per turn)', faction:'shadow',
+      onPlay: (gs)=>{ return 'Shelob lurks in darkness!'; }},
+    { id:'s4', name:'Balrog', cost:5, atk:8, def:5, hp:13, icon:'🔥', type:'Demon', effect:'Burns all enemy field cards for 2 damage on entry', faction:'shadow',
+      onPlay: (gs)=>{ gs.playerField.forEach(c=>{ c.currentHP = Math.max(0, c.currentHP-2); }); return 'The Balrog\'s fire scorches all!'; }},
+    { id:'s5', name:'Saruman', cost:4, atk:6, def:4, hp:10, icon:'🪄', type:'Wizard', effect:'Corrupts one enemy card, reducing its ATK by 3', faction:'shadow',
+      onPlay: (gs)=>{ 
+        const t = gs.playerField[0];
+        if(t){ t.atk = Math.max(0, t.atk-3); return 'Saruman corrupts your warrior!'; }
+        return 'Saruman casts his corruption!';
+      }},
+    { id:'s6', name:'Nazgûl', cost:3, atk:5, def:3, hp:9, icon:'🌑', type:'Wraith', effect:'Fear: enemy must discard a card', faction:'shadow',
+      onPlay: (gs)=>{ 
+        if(gs.playerHand.length>0){ gs.playerHand.shift(); return 'The Nazgûl\'s shriek forces you to discard!'; }
+        return 'A Nazgûl rides screaming!';
+      }},
+    { id:'s7', name:'Gothmog', cost:3, atk:5, def:4, hp:10, icon:'⚔️', type:'Orc Captain', effect:'Rallies: summons a 2/2 Orc token', faction:'shadow',
+      onPlay: (gs)=>{ 
+        if(gs.enemyField.length < 5){
+          gs.enemyField.push(createToken('Orc Soldier','👺','shadow',2,2,4));
+        }
+        return 'Gothmog calls orc reinforcements!';
+      }},
+    { id:'s8', name:'Cave Troll', cost:3, atk:6, def:5, hp:12, icon:'👾', type:'Troll', effect:'Smash: deals 3 splash damage to all enemies', faction:'shadow',
+      onPlay: (gs)=>{ gs.playerField.forEach(c=>{ c.currentHP = Math.max(0, c.currentHP-3); }); return 'The Cave Troll smashes everything!'; }},
+    { id:'s9', name:'Mouth of Sauron', cost:3, atk:4, def:3, hp:8, icon:'💀', type:'Lieutenant', effect:'Reveals and copies enemy hand card', faction:'shadow',
+      onPlay: (gs)=>{ return 'The Mouth whispers dark words!'; }},
+    { id:'s10', name:'Grima Wormtongue', cost:2, atk:2, def:2, hp:6, icon:'🐍', type:'Spy', effect:'Drains enemy mana by 2', faction:'shadow',
+      onPlay: (gs)=>{ gs.playerMana = Math.max(0, gs.playerMana-2); return 'Grima poisons the well of mana!'; }},
+    { id:'s11', name:'Smaug', cost:5, atk:9, def:6, hp:14, icon:'🐉', type:'Dragon', effect:'Dragon Fire: deals 5 direct damage to enemy hero', faction:'shadow',
+      onPlay: (gs)=>{ gs.playerHP = Math.max(0, gs.playerHP-5); return 'Smaug breathes fire on your hero!'; }},
+    { id:'s12', name:'Lurtz', cost:3, atk:6, def:3, hp:9, icon:'🏹', type:'Uruk-hai', effect:'Volley: deals 2 damage to any target on entry', faction:'shadow',
+      onPlay: (gs)=>{ gs.playerHP = Math.max(0, gs.playerHP-2); return 'Lurtz fires a black arrow!'; }},
+    { id:'s13', name:'The Dark Throne', cost:4, atk:0, def:8, hp:5, icon:'🏰', type:'Structure', effect:'Gives all shadow units +2 ATK', faction:'shadow',
+      onPlay: (gs)=>{ gs.enemyField.forEach(c=>{ c.atk += 2; }); return 'The Dark Throne empowers Mordor!'; }},
+  ],
+  elven: [
+    { id:'e1', name:'Galadriel', cost:5, atk:6, def:6, hp:11, icon:'👸', type:'High Elf', effect:'Foresight: look at top 3 enemy cards', faction:'elven',
+      onPlay: (gs)=>{ return 'Galadriel\'s mirror reveals all truths!'; }},
+    { id:'e2', name:'Glorfindel', cost:4, atk:8, def:4, hp:10, icon:'⚡', type:'Elf-lord', effect:'Ride of the Lord: +4 speed, attacks before enemies', faction:'elven',
+      onPlay: (gs)=>{ return 'Glorfindel charges like lightning!'; }},
+    { id:'e3', name:'Arwen Undómiel', cost:3, atk:4, def:4, hp:9, icon:'🌸', type:'Half-elf', effect:'Star of Evenstar: heals 5 HP to your hero', faction:'elven',
+      onPlay: (gs)=>{ gs.playerHP = Math.min(30, gs.playerHP+5); return 'Arwen\'s light restores 5 HP!'; }},
+    { id:'e4', name:'Thranduil', cost:4, atk:6, def:5, hp:10, icon:'🍃', type:'Elf King', effect:'Woodland Realm: elves gain +1 ATK/DEF', faction:'elven',
+      onPlay: (gs)=>{ gs.playerField.filter(c=>c.faction==='elven').forEach(c=>{c.atk++;c.def++;}); return 'Thranduil strengthens the elves!'; }},
+    { id:'e5', name:'Haldir', cost:3, atk:5, def:4, hp:8, icon:'🏹', type:'March Warden', effect:'Lorien Guard: +2 DEF to all allies', faction:'elven',
+      onPlay: (gs)=>{ gs.playerField.forEach(c=>{c.def+=2;}); return 'Haldir raises the guard!'; }},
+    { id:'e6', name:'Celeborn', cost:3, atk:4, def:6, hp:9, icon:'🌙', type:'Elf-lord', effect:'Ancient Wisdom: draw 1 card, enemy discards 1', faction:'elven',
+      onPlay: (gs)=>{ gs.playerDraw++; gs.enemyHand.shift(); return 'Celeborn\'s wisdom shifts the balance!'; }},
+    { id:'e7', name:'Elrohir & Elladan', cost:4, atk:5, def:5, hp:10, icon:'⚔️', type:'Twin Elves', effect:'Twin Strike: attack twice in one turn', faction:'elven',
+      onPlay: (gs)=>{ return 'The twin sons of Elrond strike together!'; }},
+    { id:'e8', name:'Lembas Bread', cost:1, atk:0, def:0, hp:1, icon:'🍞', type:'Provision', effect:'Restores 6 HP to any ally card', faction:'elven',
+      onPlay: (gs)=>{ const t=gs.playerField[0]; if(t){ t.currentHP=Math.min(t.hp,t.currentHP+6); } return 'Lembas bread restores strength!'; }},
+    { id:'e9', name:'Rivendell Archer', cost:2, atk:4, def:2, hp:7, icon:'🏹', type:'Elf', effect:'Piercing Arrow: bypasses 2 DEF', faction:'elven',
+      onPlay: (gs)=>{ return 'The archer\'s arrow finds its mark!'; }},
+    { id:'e10', name:'Mirror of Galadriel', cost:3, atk:0, def:0, hp:1, icon:'🪞', type:'Artifact', effect:'Reveals enemy hand and steals 1 card', faction:'elven',
+      onPlay: (gs)=>{ 
+        if(gs.enemyHand.length>0){ const stolen=gs.enemyHand.shift(); gs.playerHand.push(stolen); return 'The Mirror steals an enemy card!'; }
+        return 'The Mirror shows the enemy\'s plan!';
+      }},
+    { id:'e11', name:'Círdan the Shipwright', cost:4, atk:3, def:5, hp:9, icon:'⚓', type:'Elf-lord', effect:'Sea Path: immune to shadow effects', faction:'elven',
+      onPlay: (gs)=>{ return 'Círdan blesses your forces!'; }},
+    { id:'e12', name:'Sindarin Spell', cost:2, atk:0, def:0, hp:1, icon:'✨', type:'Spell', effect:'Deals 5 damage to any target', faction:'elven',
+      onPlay: (gs)=>{ 
+        if(gs.enemyField.length>0){ gs.enemyField[0].currentHP -= 5; return 'The elven spell strikes for 5!'; }
+        gs.enemyHP -= 5; return 'Sindarin magic blasts the enemy hero for 5!';
+      }},
+    { id:'e13', name:'Gil-galad', cost:5, atk:9, def:7, hp:13, icon:'🌟', type:'High King', effect:'Last Alliance: gives all cards +2 to all stats', faction:'elven',
+      onPlay: (gs)=>{ gs.playerField.forEach(c=>{c.atk+=2;c.def+=2;}); return 'Gil-galad rallies the Last Alliance!'; }},
+  ],
+  rohan: [
+    { id:'r1', name:'King Théoden', cost:5, atk:7, def:6, hp:12, icon:'👑', type:'King', effect:'Ride to Ruin: all Rohan units gain +2 ATK this turn', faction:'rohan',
+      onPlay: (gs)=>{ gs.playerField.filter(c=>c.faction==='rohan').forEach(c=>{c.atk+=2;}); return 'Théoden calls the charge!'; }},
+    { id:'r2', name:'Éowyn', cost:4, atk:8, def:3, hp:9, icon:'⚔️', type:'Shieldmaiden', effect:'No man can kill me: immune to Nazgûl effects', faction:'rohan',
+      onPlay: (gs)=>{ return 'I am no man! Éowyn strikes!'; }},
+    { id:'r3', name:'Éomer', cost:3, atk:6, def:4, hp:10, icon:'🐴', type:'Marshal', effect:'Cavalry: deals +2 damage to orc-type enemies', faction:'rohan',
+      onPlay: (gs)=>{ return 'Éomer leads the cavalry!'; }},
+    { id:'r4', name:'Shadowfax', cost:3, atk:4, def:3, hp:8, icon:'🐎', type:'Mount', effect:'Speed: the mounted warrior attacks twice', faction:'rohan',
+      onPlay: (gs)=>{ return 'Shadowfax outruns the wind!'; }},
+    { id:'r5', name:'Merry (Rohirrim)', cost:2, atk:3, def:2, hp:7, icon:'🗡️', type:'Hobbit-Rider', effect:'Stabbed the Witch-king: stuns one enemy for 1 turn', faction:'rohan',
+      onPlay: (gs)=>{ if(gs.enemyField.length>0){ gs.enemyField[0].stunned=true; } return 'Merry stabs from behind!'; }},
+    { id:'r6', name:'Gamling', cost:2, atk:3, def:4, hp:8, icon:'🛡️', type:'Warrior', effect:'Banner: restores 3 HP to hero when ally dies', faction:'rohan',
+      onPlay: (gs)=>{ return 'Gamling plants the banner!'; }},
+    { id:'r7', name:'Rohirrim Cavalry', cost:3, atk:5, def:4, hp:9, icon:'⚔️', type:'Unit', effect:'Charge: +3 ATK on the turn played', faction:'rohan',
+      onPlay: (gs)=>{ return 'The cavalry charges forward!'; }},
+    { id:'r8', name:'Herugrim', cost:2, atk:0, def:0, hp:1, icon:'🗡️', type:'Weapon', effect:'Equip: gives +3 ATK to one ally forever', faction:'rohan',
+      onPlay: (gs)=>{ const t=gs.playerField[0]; if(t){ t.atk+=3; } return 'Herugrim is unsheathed — +3 ATK!'; }},
+    { id:'r9', name:'Golden Hall', cost:3, atk:0, def:6, hp:6, icon:'🏯', type:'Structure', effect:'Meduseld: heals hero for 2 each turn', faction:'rohan',
+      onPlay: (gs)=>{ return 'Meduseld stands strong!'; }},
+    { id:'r10', name:'Grimbold', cost:3, atk:5, def:5, hp:10, icon:'🪖', type:'Captain', effect:'Wedge formation: blocks 3 damage to hero', faction:'rohan',
+      onPlay: (gs)=>{ gs.playerBlock = (gs.playerBlock||0)+3; return 'Grimbold forms the shield wall!'; }},
+    { id:'r11', name:'Horn of Helm', cost:2, atk:0, def:0, hp:1, icon:'📯', type:'Artifact', effect:'Rally: draw 2 cards and gain 2 mana', faction:'rohan',
+      onPlay: (gs)=>{ gs.playerDraw+=2; gs.playerMana=Math.min(gs.maxMana, gs.playerMana+2); return 'The Horn of Helm echoes — draw 2, gain 2 mana!'; }},
+    { id:'r12', name:'Dernhelm', cost:3, atk:5, def:3, hp:9, icon:'⚔️', type:'Shieldmaiden', effect:'Secret: costs 1 less if enemy has Nazgûl', faction:'rohan',
+      onPlay: (gs)=>{ return 'Dernhelm rides into legend!'; }},
+    { id:'r13', name:'Théodred', cost:3, atk:5, def:4, hp:9, icon:'🏅', type:'Prince', effect:'Sacrifice: heals hero for 8 when destroyed', faction:'rohan',
+      onPlay: (gs)=>{ return 'Théodred rides to his fate!'; }},
+  ],
+};
+
+// ═══════════════════════════════════════════════════════════════
+//  FACTION META
+// ═══════════════════════════════════════════════════════════════
+const FACTION_META = {
+  fellowship: { name:'The Fellowship', color:'#6abf6a', enemy:'shadow', enemyName:'Shadow of Mordor', quote:'Not all those who wander are lost.' },
+  shadow: { name:'Shadow of Mordor', color:'#cc4444', enemy:'fellowship', enemyName:'The Fellowship', quote:'One Ring to rule them all.' },
+  elven: { name:'The Elven Council', color:'#7ab0ff', enemy:'shadow', enemyName:'Shadow of Mordor', quote:'Even the smallest person can change the course of the future.' },
+  rohan: { name:'Riders of Rohan', color:'#d4aa55', enemy:'shadow', enemyName:'Shadow of Mordor', quote:'Ride to ruin and the world\'s ending!' },
+};
+
+// ═══════════════════════════════════════════════════════════════
+//  GAME STATE
+// ═══════════════════════════════════════════════════════════════
+let G = {};
+
+function createToken(name, icon, faction, atk, def, hp) {
+  return { id:'tok_'+Math.random(), name, cost:0, atk, def, hp, currentHP:hp, maxHP:hp, icon, type:'Token', effect:'', faction, onPlay:null, onAttack:null, exhausted:false };
+}
+
+function deepCloneCard(card) {
+  return Object.assign({}, card, {
+    currentHP: card.hp,
+    maxHP: card.hp,
+    exhausted: false,
+    stunned: false,
+    _uid: Math.random().toString(36).slice(2),
+  });
+}
+
+function buildDeck(faction) {
+  const cards = CARD_DB[faction].map(deepCloneCard);
+  // Shuffle
+  for (let i = cards.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [cards[i], cards[j]] = [cards[j], cards[i]];
+  }
+  return cards;
+}
+
+function startGame() {
+  const faction = G.selectedFaction;
+  if (!faction) return;
+  const meta = FACTION_META[faction];
+  const enemyFaction = meta.enemy;
+  const enemyMeta = FACTION_META[enemyFaction];
+
+  G = {
+    selectedFaction: faction,
+    enemyFaction,
+    turn: 1,
+    maxMana: 3,
+    playerMana: 3,
+    enemyMana: 3,
+    playerHP: 30,
+    enemyHP: 30,
+    playerField: [],
+    enemyField: [],
+    playerDeck: buildDeck(faction),
+    enemyDeck: buildDeck(enemyFaction),
+    playerHand: [],
+    enemyHand: [],
+    playerGrave: [],
+    enemyGrave: [],
+    selectedHandCard: null,
+    selectedFieldCard: null,
+    phase: 'player',  // 'player' or 'enemy'
+    skipEnemyTurn: false,
+    playerBlock: 0,
+    enemyBlock: 0,
+  };
+
+  // Draw initial hands
+  for (let i = 0; i < 5; i++) drawCard('player');
+  for (let i = 0; i < 5; i++) drawCard('enemy');
+
+  showScreen('game-screen');
+  updateHUD();
+  renderAll();
+  setLog(`A new battle begins! ${meta.name} vs ${enemyMeta.name}. Your mana: ${G.playerMana}. Play your cards wisely!`, '');
+}
+
+function drawCard(who) {
+  if (who === 'player') {
+    if (G.playerDeck.length === 0) { endGame(false, 'Your deck is exhausted!'); return; }
+    G.playerHand.push(G.playerDeck.shift());
+  } else {
+    if (G.enemyDeck.length === 0) { endGame(true, 'The enemy deck crumbles!'); return; }
+    G.enemyHand.push(G.enemyDeck.shift());
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  RENDERING
+// ═══════════════════════════════════════════════════════════════
+function factionBorderColor(faction) {
+  return { fellowship:'#4a9a4a', shadow:'#8b1a1a', elven:'#4a7abf', rohan:'#bf9a4a', neutral:'#8a6a1a' }[faction] || '#8a6a1a';
+}
+
+function buildCardEl(card, context, idx) {
+  const div = document.createElement('div');
+  div.className = `card card-${card.faction||'neutral'}${card.exhausted?' exhausted':''}`;
+  div.dataset.uid = card._uid || card.id;
+
+  const hp = card.currentHP ?? card.hp;
+  const maxHP = card.maxHP ?? card.hp;
+  const hpPct = Math.max(0, Math.min(100, (hp/maxHP)*100));
+
+  div.innerHTML = `
+    <div class="card-inner">
+      <div class="card-ornament"></div>
+      <div class="card-top">
+        <div class="card-cost">${card.cost}</div>
+        <div class="card-type-tag">${card.type||''}</div>
+      </div>
+      <div class="card-art">
+        <div class="card-art-bg">${card.icon}</div>
+        <div class="card-art-symbol">${card.icon}</div>
+        ${card.stunned ? '<div style="position:absolute;top:2px;right:2px;font-size:0.6rem;background:#4a4aff;padding:1px 3px">💤STUN</div>' : ''}
+      </div>
+      <div class="card-name">${card.name}</div>
+      <div class="card-stats">
+        <span class="stat-atk">⚔${card.atk}</span>
+        <span class="stat-hp">❤${hp}</span>
+        <span class="stat-def">🛡${card.def}</span>
+      </div>
+      ${card.effect ? `<div class="card-effect-text">${card.effect}</div>` : ''}
+      ${context==='field' ? `<div class="card-hp-bar"><div class="card-hp-fill" style="width:${hpPct}%;background:${hpPct>50?'#55aa55':hpPct>25?'#aaaa22':'#aa2222'}"></div></div>` : ''}
+    </div>`;
+
+  // Events
+  div.addEventListener('mouseenter', (e) => showTooltip(card, e));
+  div.addEventListener('mousemove', (e) => moveTooltip(e));
+  div.addEventListener('mouseleave', hideTooltip);
+
+  if (context === 'hand') {
+    div.addEventListener('click', () => selectHandCard(idx));
+    if (G.selectedHandCard === idx) div.classList.add('selected');
+  } else if (context === 'field' && context !== 'enemy-field') {
+    div.addEventListener('click', () => selectPlayerFieldCard(idx));
+    if (G.selectedFieldCard === idx) div.classList.add('selected');
+  } else if (context === 'enemy-field') {
+    div.classList.add('attackable');
+    div.addEventListener('click', () => attackEnemyCard(idx));
+  }
+
+  return div;
+}
+
+function renderAll() {
+  renderHand();
+  renderPlayerField();
+  renderEnemyField();
+  updateHUD();
+}
+
+function renderHand() {
+  const container = document.getElementById('player-hand');
+  container.innerHTML = '';
+  G.playerHand.forEach((card, i) => {
+    const el = buildCardEl(card, 'hand', i);
+    el.style.animationDelay = (i*0.05)+'s';
+    el.classList.add('card-deal');
+    container.appendChild(el);
+  });
+  // Action buttons in hand area
+  const existing = document.getElementById('hand-actions');
+  if (existing) existing.remove();
+  const actions = document.createElement('div');
+  actions.id = 'hand-actions';
+  actions.style.cssText = 'display:flex;gap:8px;align-items:center;margin-left:16px;flex-shrink:0;';
+  if (G.selectedHandCard !== null) {
+    const card = G.playerHand[G.selectedHandCard];
+    const btn = document.createElement('button');
+    btn.className = 'btn';
+    btn.style.cssText = 'padding:8px 16px;font-size:0.8rem;';
+    btn.innerHTML = `<span>Play ${card.name} (${card.cost}💎)</span>`;
+    btn.onclick = playSelectedCard;
+    if (card.cost > G.playerMana) { btn.disabled = true; btn.style.opacity='0.4'; }
+    actions.appendChild(btn);
+
+    if (G.selectedFieldCard !== null) {
+      const ab = document.createElement('button');
+      ab.className = 'btn btn-danger';
+      ab.style.cssText = 'padding:8px 16px;font-size:0.8rem;';
+      ab.innerHTML = '<span>Attack Hero</span>';
+      ab.onclick = attackEnemyHero;
+      actions.appendChild(ab);
+    }
+  }
+  if (G.selectedFieldCard !== null && G.selectedHandCard === null) {
+    const ab = document.createElement('button');
+    ab.className = 'btn btn-danger';
+    ab.style.cssText = 'padding:8px 16px;font-size:0.8rem;';
+    ab.innerHTML = '<span>⚔ Attack Hero</span>';
+    ab.onclick = attackEnemyHero;
+    actions.appendChild(ab);
+  }
+  document.querySelector('.hand-area').appendChild(actions);
+}
+
+function renderPlayerField() {
+  const container = document.getElementById('player-field');
+  container.innerHTML = '';
+  G.playerField.forEach((card, i) => {
+    const el = buildCardEl(card, 'field', i);
+    el.addEventListener('click', () => selectPlayerFieldCard(i));
+    if (G.selectedFieldCard === i) el.classList.add('selected');
+    container.appendChild(el);
+  });
+}
+
+function renderEnemyField() {
+  const container = document.getElementById('enemy-field');
+  container.innerHTML = '';
+  G.enemyField.forEach((card, i) => {
+    const el = buildCardEl(card, 'enemy-field', i);
+    if (G.selectedFieldCard !== null || G.selectedHandCard === null) {
+      // clickable for attack
+    }
+    container.appendChild(el);
+  });
+}
+
+function updateHUD() {
+  // Player HP
+  const pPct = Math.max(0,(G.playerHP/30)*100);
+  document.getElementById('player-hp-bar').style.width = pPct+'%';
+  document.getElementById('player-hp-bar').className = 'hp-fill ' + (pPct>60?'high':pPct>30?'mid':'');
+  document.getElementById('player-hp-num').textContent = `${G.playerHP}/30`;
+
+  // Enemy HP
+  const ePct = Math.max(0,(G.enemyHP/30)*100);
+  document.getElementById('enemy-hp-bar').style.width = ePct+'%';
+  document.getElementById('enemy-hp-bar').className = 'hp-fill ' + (ePct>60?'high':ePct>30?'mid':'');
+  document.getElementById('enemy-hp-num').textContent = `${G.enemyHP}/30`;
+
+  // Mana
+  const mana = document.getElementById('mana-dots');
+  mana.innerHTML = '';
+  for (let i = 0; i < G.maxMana; i++) {
+    const d = document.createElement('div');
+    d.className = 'mana-dot' + (i < G.playerMana ? ' filled' : '');
+    mana.appendChild(d);
+  }
+  document.getElementById('mana-num').textContent = `${G.playerMana}/${G.maxMana}`;
+
+  document.getElementById('turn-num').textContent = G.turn;
+  document.getElementById('phase-label').textContent = G.phase === 'player' ? 'Your Turn' : 'Enemy Turn';
+  document.getElementById('enemy-hand-count').textContent = G.enemyHand.length;
+  document.getElementById('enemy-deck-count').textContent = G.enemyDeck.length;
+
+  const meta = FACTION_META[G.selectedFaction];
+  const emeta = FACTION_META[G.enemyFaction];
+  document.getElementById('player-faction-name').textContent = meta?.name || 'Player';
+  document.getElementById('enemy-faction-name').textContent = emeta?.name || 'Enemy';
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  PLAYER ACTIONS
+// ═══════════════════════════════════════════════════════════════
+function selectHandCard(idx) {
+  if (G.phase !== 'player') return;
+  G.selectedHandCard = (G.selectedHandCard === idx) ? null : idx;
+  G.selectedFieldCard = null;
+  renderAll();
+}
+
+function selectPlayerFieldCard(idx) {
+  if (G.phase !== 'player') return;
+  if (G.playerField[idx]?.exhausted) { setLog(`${G.playerField[idx].name} has already acted this turn.`, ''); return; }
+  if (G.playerField[idx]?.stunned) { setLog(`${G.playerField[idx].name} is stunned!`, ''); return; }
+  G.selectedFieldCard = (G.selectedFieldCard === idx) ? null : idx;
+  G.selectedHandCard = null;
+  renderAll();
+}
+
+function playSelectedCard() {
+  if (G.selectedHandCard === null) return;
+  const card = G.playerHand[G.selectedHandCard];
+  if (card.cost > G.playerMana) { setLog(`Not enough mana! Need ${card.cost}, have ${G.playerMana}.`, ''); return; }
+
+  G.playerMana -= card.cost;
+  G.playerHand.splice(G.selectedHandCard, 1);
+  G.selectedHandCard = null;
+
+  // Don't add pure artifacts to field (hp=1, atk=0, def=0)
+  const isPureSpell = card.atk === 0 && card.def === 0;
+  let msg = '';
+  if (card.onPlay) {
+    msg = card.onPlay(G) || '';
+  }
+
+  if (!isPureSpell) {
+    G.playerField.push(card);
+  } else {
+    G.playerGrave.push(card);
+  }
+
+  // Apply pending draws
+  if (G.playerDraw > 0) {
+    for (let i = 0; i < G.playerDraw; i++) drawCard('player');
+    G.playerDraw = 0;
+  }
+
+  cleanDeadCards();
+  setLog(msg || `${card.name} enters the battlefield!`, card.faction === 'shadow' ? 'damage' : 'special');
+  renderAll();
+  checkWin();
+}
+
+function attackEnemyCard(targetIdx) {
+  if (G.phase !== 'player') return;
+  if (G.selectedFieldCard === null) { setLog('Select one of your field cards first!', ''); return; }
+
+  const attacker = G.playerField[G.selectedFieldCard];
+  const defender = G.enemyField[targetIdx];
+  if (!attacker || !defender) return;
+  if (attacker.exhausted) { setLog(`${attacker.name} has already attacked!`, ''); return; }
+  if (attacker.stunned) { setLog(`${attacker.name} is stunned!`, ''); return; }
+
+  doCombat(attacker, defender, true);
+  attacker.exhausted = true;
+  G.selectedFieldCard = null;
+  G.selectedHandCard = null;
+
+  cleanDeadCards();
+  renderAll();
+  checkWin();
+}
+
+function attackEnemyHero() {
+  if (G.phase !== 'player') return;
+  if (G.selectedFieldCard === null && G.selectedHandCard === null) {
+    setLog('Select a field card to attack with!', ''); return;
+  }
+
+  // Must use field card
+  if (G.selectedFieldCard === null) { setLog('Select a field card to attack, not a hand card!', ''); return; }
+
+  const attacker = G.playerField[G.selectedFieldCard];
+  if (!attacker) return;
+  if (attacker.exhausted) { setLog(`${attacker.name} already attacked!`); return; }
+  if (attacker.stunned) { setLog(`${attacker.name} is stunned!`); return; }
+
+  const rawDmg = Math.max(0, attacker.atk - G.enemyBlock);
+  G.enemyBlock = 0;
+  G.enemyHP = Math.max(0, G.enemyHP - rawDmg);
+  attacker.exhausted = true;
+
+  if (attacker.onAttack) attacker.onAttack(G, rawDmg);
+
+  G.selectedFieldCard = null;
+  showDamageFloat(rawDmg, true);
+  setLog(`${attacker.name} strikes the enemy hero for ${rawDmg} damage!`, 'damage');
+  renderAll();
+  checkWin();
+}
+
+function doCombat(attacker, defender, isPlayer) {
+  const atkDmg = Math.max(0, attacker.atk - defender.def);
+  const defDmg = Math.max(0, defender.atk - attacker.def);
+
+  defender.currentHP = Math.max(0, (defender.currentHP ?? defender.hp) - atkDmg);
+  attacker.currentHP = Math.max(0, (attacker.currentHP ?? attacker.hp) - defDmg);
+
+  showDamageFloat(atkDmg, isPlayer);
+  setLog(`${attacker.name} (⚔${attacker.atk}) vs ${defender.name} (🛡${defender.def}) — deals ${atkDmg} dmg, takes ${defDmg} dmg!`, 'damage');
+}
+
+function cleanDeadCards() {
+  G.playerField = G.playerField.filter(c => {
+    if ((c.currentHP ?? c.hp) <= 0) {
+      // Théodred death trigger
+      if (c.id === 'r13') G.playerHP = Math.min(30, G.playerHP + 8);
+      G.playerGrave.push(c);
+      return false;
+    }
+    return true;
+  });
+  G.enemyField = G.enemyField.filter(c => {
+    if ((c.currentHP ?? c.hp) <= 0) { G.enemyGrave.push(c); return false; }
+    return true;
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  END TURN / AI
+// ═══════════════════════════════════════════════════════════════
+function endTurn() {
+  if (G.phase !== 'player') return;
+
+  // Refresh player cards
+  G.playerField.forEach(c => { c.exhausted = false; c.stunned = false; });
+  // Draw
+  drawCard('player');
+
+  // Increment turn
+  G.turn++;
+  G.maxMana = Math.min(10, G.turn + 2);
+  G.playerMana = G.maxMana;
+  G.enemyMana = G.maxMana;
+
+  G.selectedHandCard = null;
+  G.selectedFieldCard = null;
+  G.phase = 'enemy';
+
+  setLog('Enemy is thinking...', '');
+  updateHUD();
+  renderAll();
+
+  if (G.skipEnemyTurn) {
+    G.skipEnemyTurn = false;
+    setLog('The One Ring confounds the enemy — their turn is skipped!', 'special');
+    setTimeout(startPlayerTurn, 1000);
+    return;
+  }
+
+  setTimeout(runEnemyAI, 800);
+}
+
+function runEnemyAI() {
+  // Draw enemy card
+  drawCard('enemy');
+
+  // 1) Play cards
+  let played = true;
+  while (played) {
+    played = false;
+    const affordable = G.enemyHand.filter(c => c.cost <= G.enemyMana && G.enemyField.length < 6);
+    if (affordable.length > 0) {
+      // Play highest cost card we can afford
+      affordable.sort((a,b) => b.cost - a.cost);
+      const card = affordable[0];
+      G.enemyHand.splice(G.enemyHand.indexOf(card), 1);
+      G.enemyMana -= card.cost;
+      let msg = '';
+      if (card.onPlay) msg = card.onPlay(G) || '';
+      const isPureSpell = card.atk === 0 && card.def === 0;
+      if (!isPureSpell) G.enemyField.push(card);
+      else G.enemyGrave.push(card);
+      if (G.enemyDraw > 0) { for(let i=0;i<G.enemyDraw;i++) drawCard('enemy'); G.enemyDraw=0; }
+      cleanDeadCards();
+      setLog(msg || `Enemy plays ${card.name}!`, 'damage');
+      played = true;
+    }
+  }
+
+  // 2) Attack with all enemy field cards
+  G.enemyField.forEach(attacker => {
+    if (attacker.exhausted || attacker.stunned) return;
+    if (G.playerField.length > 0) {
+      // attack lowest HP player card
+      const target = G.playerField.reduce((a,b) => (a.currentHP??a.hp) < (b.currentHP??b.hp) ? a : b);
+      doCombat(attacker, target, false);
+      attacker.exhausted = true;
+      cleanDeadCards();
+    } else {
+      // attack hero directly
+      const dmg = Math.max(0, attacker.atk - (G.playerBlock||0));
+      G.playerBlock = 0;
+      G.playerHP = Math.max(0, G.playerHP - dmg);
+      attacker.exhausted = true;
+      showDamageFloat(dmg, false);
+      setLog(`Enemy's ${attacker.name} attacks you for ${dmg} damage!`, 'damage');
+    }
+  });
+
+  cleanDeadCards();
+  renderAll();
+  checkWin();
+
+  setTimeout(startPlayerTurn, 600);
+}
+
+function startPlayerTurn() {
+  G.phase = 'player';
+  G.playerField.forEach(c => { c.exhausted = false; c.stunned = false; });
+
+  // Passive heals (Golden Hall, Samwise)
+  const goldenHall = G.playerField.find(c=>c.id==='r9');
+  if (goldenHall) { G.playerHP = Math.min(30, G.playerHP+2); }
+
+  updateHUD();
+  renderAll();
+  setLog(`Turn ${G.turn}: Your move! Mana: ${G.playerMana}/${G.maxMana}`, 'special');
+  checkWin();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  WIN CHECK
+// ═══════════════════════════════════════════════════════════════
+function checkWin() {
+  if (G.enemyHP <= 0) { endGame(true, FACTION_META[G.selectedFaction]?.quote || 'The light prevails!'); }
+  else if (G.playerHP <= 0) { endGame(false, 'The darkness consumes Middle-earth...'); }
+}
+
+function endGame(win, msg) {
+  document.getElementById('result-title').textContent = win ? '⭐ Victory! ⭐' : '💀 Defeated 💀';
+  document.getElementById('result-title').style.color = win ? 'var(--gold)' : '#cc4444';
+  document.getElementById('result-text').textContent = msg;
+  document.getElementById('result-overlay').classList.add('show');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  UI HELPERS
+// ═══════════════════════════════════════════════════════════════
+function setLog(msg, type) {
+  const el = document.getElementById('battle-log');
+  el.textContent = msg;
+  el.className = 'log-text' + (type ? ' '+type : '');
+}
+
+function showDamageFloat(dmg, isPlayer) {
+  if (dmg === 0) return;
+  const el = document.createElement('div');
+  el.className = 'damage-float';
+  el.textContent = (isPlayer ? '' : '-') + dmg;
+  el.style.color = isPlayer ? '#ff4444' : '#44ff44';
+  el.style.left = (isPlayer ? '70%' : '30%');
+  el.style.top = (isPlayer ? '40%' : '60%');
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1300);
+}
+
+function showTooltip(card, e) {
+  const tt = document.getElementById('tooltip');
+  document.getElementById('tt-name').textContent = card.name;
+  document.getElementById('tt-effect').textContent = card.effect || card.type || '';
+  tt.classList.add('show');
+  moveTooltip(e);
+}
+function moveTooltip(e) {
+  const tt = document.getElementById('tooltip');
+  tt.style.left = (e.clientX + 12) + 'px';
+  tt.style.top = (e.clientY - 40) + 'px';
+}
+function hideTooltip() {
+  document.getElementById('tooltip').classList.remove('show');
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showFactionSelect() {
+  G = { selectedFaction: null };
+  showScreen('faction-screen');
+}
+
+function selectFaction(f) {
+  G.selectedFaction = f;
+  document.querySelectorAll('.faction-card').forEach(el => el.classList.remove('selected'));
+  document.getElementById('f-'+f).classList.add('selected');
+  document.getElementById('faction-confirm').style.display = 'block';
+}
+
+function showRules() { showScreen('rules-screen'); }
+
+function confirmForfeit() {
+  if (confirm('Forfeit this battle?')) {
+    endGame(false, 'You have surrendered... The Shadow grows stronger.');
+  }
+}
+
+function restartGame() {
+  document.getElementById('result-overlay').classList.remove('show');
+  showFactionSelect();
+}
+</script>
+</body>
+</html>
